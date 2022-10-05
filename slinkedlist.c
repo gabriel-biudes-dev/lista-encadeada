@@ -14,12 +14,26 @@ Lista* insert(Lista* l, int info){
 }
 
 void printList(Lista *l){
+    /*
     if(l == NULL){
         printf("\n");
         return;
     }
     printf(" %d ", l->data);
     printList(l->next);
+    */
+   /*
+   while(l != NULL){
+    printf(" %d ", l->data);
+    l = l->next;
+   }
+   */
+    Lista *aux;
+    for(aux = l; aux != NULL; aux = aux->next){
+        printf(" %d ", aux->data);
+    }
+    printf("\n");
+    free(aux);
 }
 
 void insertAfter(Lista *l, int info, int n){
@@ -173,12 +187,150 @@ Lista* remover_indice(Lista *l, int n){
     return temp;
 }
 
+Lista* insertRec(Lista *l, int info, int x){
+    if(l == NULL) return NULL;
+    if(l->data != info) return insertRec(l->next, info, x);
+    Lista *aux = (Lista*) malloc(sizeof(Lista));
+    Lista *temp = l;
+    aux->data = x;
+    aux->next = temp->next;
+    l->next = aux;
+    return l;
+}
+
+Lista* insertOrder(Lista *l, int x){
+    Lista *aux = (Lista*) malloc(sizeof(Lista));
+    aux->data = x;
+    aux->next = NULL;
+    if(l == NULL) return aux;
+    if(x < l->data){
+        aux->next = l;
+        return aux;
+    }
+    Lista *tmp = l;
+    Lista *ant = l;
+    while(l != NULL && l->data < x){
+        ant = l;
+        l = l->next;
+    }
+    ant->next = aux;
+    aux->next = l;
+    return tmp;
+}
+
+Lista* inverter(Lista *l){
+    Lista *aux = NULL;
+    while(l != NULL){
+        aux = insert(aux, l->data);
+        l = l->next;
+    }
+    return aux;
+}
+
+void swap(Lista *l, int x, int y){
+    while(l != NULL){
+        if(l->data == x){
+            l->data = y;
+            l = l->next;
+            continue;
+        }
+        if(l->data == y){
+            l->data = x;
+            l = l->next;
+            continue;
+        }
+        l = l->next;
+    }
+}
+
+Lista* ordenar(Lista *l){
+    Lista *aux = l;
+    while(l != NULL && l->next != NULL){
+        if(l->data > l->next->data){
+            swap(l, l->data, l->next->data);
+            return ordenar(aux);
+        }
+        l = l->next;
+    }
+    return aux;
+}
+
+int compare(Lista *l1, Lista *l2){
+    if(l1 == NULL && l2 != NULL) return 1;
+    if(l2 == NULL && l1 != NULL) return 1;
+    if(l1 == NULL && l2 == NULL) return 0;
+    if(l1->data == l2->data) return 0 + compare(l1->next, l2->next);
+    return 1;
+}
+
+Lista* moveMenor(Lista *l){
+    Lista *ant = l;
+    Lista *menor = l;
+    Lista *aux = l;
+    while(l != NULL && l->next != NULL){
+        if(l->next->data < menor->data){
+            ant = l;
+            menor = l->next;
+        }
+        l = l->next;
+    }
+    ant->next = menor->next;
+    menor->next = aux;
+    return menor;
+}
+
+int calcProfundidade(Lista *l, int x){
+    int prof = 0;
+    while(l != NULL && l->data != x){
+        prof++;
+        l = l->next;
+    }
+    if(l == NULL) return -1;
+    return prof;
+}
+
+int calcAltura(Lista *l, int x){
+    int altura = -1;
+    while(l != NULL){
+        if(altura >= 0) altura++;
+        if(l->data == x) altura = 0;
+        l = l->next;
+    }
+    return altura;
+}
+
+int isOrdened(Lista *l){
+    int val = 1;
+    while(l != NULL && l->next != NULL){
+        if(l->data > l->next->data) val = 0;
+        l = l->next;
+    }
+    return val;
+}
+
+Lista* invert(Lista *l){
+    Lista *ant = NULL;
+    Lista *aux = l;
+    while(l != NULL && l->next != NULL){
+        aux = l->next;
+        l->next = ant;
+        ant = l;
+        l = aux;
+    }
+    l->next = ant;
+    return l;
+}
+
 int main(){
     Lista *l = NULL;
     Lista *l2 = NULL;
+    Lista *l3 = NULL;
+    /*
+    l = insertEnd(l, 23);
     l = insertEnd(l, 2);
     l = insertEnd(l, 3);
     l = insertEnd(l, 3);
+    l = insertEnd(l, 15);
     l = insertEnd(l, 3);
     l = insertEnd(l, 2);
     l = insertEnd(l, 10);
@@ -186,10 +338,40 @@ int main(){
     l2 = insertEnd(l2, 2);
     l2 = insertEnd(l2, 10);
     l2 = insertEnd(l2, 10);
-
+    insertRec(l, 15, 99);
+    */
     //l = pares(l);
     //l = remover_indice(l, 1);
-    printList(l);
+    l = insertEnd(l, 20);
+    l = insertEnd(l, 25);
+    l = insertEnd(l, 30);
+    l = insertEnd(l, 40);
+    //l = insertOrder(l, 27);
+
+    l2 = insertOrder(l2, 27);
+    l2 = insertOrder(l2, 15);
+    l2 = insertOrder(l2, 33);
+    l2 = insertOrder(l2, 0);
+    l2 = insertOrder(l2, 30);
+    //l2 = insertOrder(l2, 30);
+    //printList(l);
+    //l2 = inverter(l2);
+    //l2 = ordenar(l2);
+    //swap(l2, 33, 0);
+    //l2 = ordenar(l2);
+    l3 = insertEnd(l3, 98);
+    l3 = insertEnd(l3, 2);
+    l3 = insertEnd(l3, 30);
+    l3 = insertEnd(l3, 1);
+    l3 = insertEnd(l3, 33);
+    //printList(l2);
+    l3 = moveMenor(l3);
+    l3 = invert(l3);
+    printList(l3);
+    //printf("%d", isOrdened(l));
+    //printf("%d", calcProfundidade(l3, 222));
+    //printf("%d", calcAltura(l3, 332));
+    //printf("%d", compare(l2, l3));
     //printf("%d", esta_contido(l, l2));
     //printf("%d", calcSize(l));
     //printf("%d\n", somar_intervalo(l, 0, 10));
